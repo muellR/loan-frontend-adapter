@@ -19,12 +19,16 @@ public class FinancingObjectRepository {
 
     @PostConstruct
     public void init() throws IOException {
+        readDataFromResources("/data/20231210_TestData_FINANCING_OBJECT.json");
+    }
+
+    private void readDataFromResources(String resourceFilePath) throws IOException {
         TypeReference<List<FinancingObject>> typeReference = new TypeReference<>() {};
-        InputStream inputStream = TypeReference.class.getResourceAsStream("/data/20231210_TestData_FINANCING_OBJECT.json");
+        InputStream inputStream = TypeReference.class.getResourceAsStream(resourceFilePath);
         financingObjects = objectMapper.readValue(inputStream, typeReference);
     }
 
-    public List<FinancingObject> findFinancingObjectByUserId(final Long userId) {
+    public List<FinancingObject> findFinancingObjectsByUserId(final Long userId) {
         return financingObjects.stream()
                 .filter(fo -> fo.getOwners() != null)
                 .filter(fo -> fo.getOwners().stream().anyMatch(o -> o.getId().equals(userId)))

@@ -18,7 +18,7 @@ public class LoanRestController implements com.appletree.lfa.api.ServiceApiDeleg
     public ResponseEntity<List<Loan>> serviceV1LoansByUserUserIdGet(String userId) {
         try {
             List<Loan> loans = new ArrayList<>();
-            System.out.println(financingObjectRepository.findFinancingObjectByUserId(Long.parseLong(userId)));
+            System.out.println(financingObjectRepository.findFinancingObjectsByUserId(Long.parseLong(userId)));
             return ResponseEntity.ok(loans);
         } catch (Exception e) {
             return ResponseEntity.status(500).body(null);
