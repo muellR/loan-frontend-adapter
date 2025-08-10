@@ -1,12 +1,12 @@
 package com.appletree.lfa.api;
 
-import com.appletree.lfa.data.access.ResourceDataLoader;
-import com.appletree.lfa.data.access.repo.FinancingObjectRepository;
-import com.appletree.lfa.data.access.repo.LimitRepository;
-import com.appletree.lfa.data.access.repo.ProductRepository;
 import com.appletree.lfa.data.model.financingobject.FinancingObject;
+import com.appletree.lfa.data.access.repo.FinancingObjectRepository;
 import com.appletree.lfa.data.model.limit.Limit;
+import com.appletree.lfa.data.access.repo.LimitRepository;
 import com.appletree.lfa.data.model.product.Product;
+import com.appletree.lfa.data.access.repo.ProductRepository;
+import com.appletree.lfa.data.access.ResourceDataLoader;
 import com.appletree.lfa.model.Loan;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Test;

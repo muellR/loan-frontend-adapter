@@ -2,6 +2,7 @@ package com.appletree.lfa.data.access.repo;
 
 import com.appletree.lfa.data.access.ResourceDataLoader;
 import com.appletree.lfa.data.model.financingobject.FinancingObject;
+import com.appletree.lfa.data.model.financingobject.FinancingObjectOwner;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Repository;
 
@@ -24,6 +25,17 @@ public class FinancingObjectRepository {
         return financingObjects.stream()
                 .filter(fo -> fo.getOwners() != null)
                 .filter(fo -> fo.getOwners().stream().anyMatch(o -> o.getId().equals(userId)))
+                .toList();
+    }
+
+    public List<String> findUserIds() {
+        if (financingObjects == null) {
+            financingObjects = getFinancingObjects();
+        }
+        return financingObjects.stream()
+                .flatMap(fo -> fo.getOwners().stream())
+                .map(FinancingObjectOwner::getId)
+                .map(String::valueOf)
                 .toList();
     }
 
