@@ -8,7 +8,6 @@ import com.appletree.lfa.data.product.Product;
 import com.appletree.lfa.data.product.ProductRepository;
 import com.appletree.lfa.data.shared.ResourceDataLoader;
 import com.appletree.lfa.model.Loan;
-import com.appletree.lfa.model.LoanCollateralInner;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.TestInstance;
@@ -18,13 +17,11 @@ import org.springframework.test.context.bean.override.mockito.MockitoSpyBean;
 
 import java.time.LocalDate;
 import java.util.List;
-import java.util.Objects;
 
 import static com.appletree.lfa.model.Loan.LoanTypeEnum.CHILD_LOAN;
 import static com.appletree.lfa.model.Loan.LoanTypeEnum.PARENT_LOAN;
 import static com.appletree.lfa.util.DateUtil.convert;
 import static com.appletree.lfa.util.DateUtil.getFrequencies;
-import static java.lang.Double.parseDouble;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.tuple;
 import static org.mockito.Mockito.doReturn;
@@ -107,7 +104,7 @@ class LoanRestControllerTest {
     }
 
     @Test
-    public void givenMultipleProducts_whenLoansReturned_thenOnlyParentHasAmortisationPaymentAmount() {
+    public void givenMultipleProducts_whenLoansReturned_thenOnlyParentHasAmortisationPaymentAmountAndPaymentFrequency() {
         List<Loan> loans = loanRestController.serviceV1LoansByUserUserIdGet("5").getBody();
 
         assertThat(loans).extracting(Loan::getLoanType, l -> l.getCollateral().getFirst().getAmortisationPaymentAmount(), Loan::getPaymentFrequency)
@@ -117,4 +114,22 @@ class LoanRestControllerTest {
                         tuple(CHILD_LOAN, null, null)
                 );
     }
+
+    @Test
+    public void givenMultipleProducts_whenLoansReturned_thenParentHasEarliestInterest() {
+        // TODO muellR: use case violates specification, will not be implemented until clarified
+    }
+
+    @Test
+    public void givenMultipleProducts_whenLoansReturned_thenOnlyChildrenHaveInterestRateAndInterestPaymentFrequency() {
+        List<Loan> loans = loanRestController.serviceV1LoansByUserUserIdGet("6").getBody();
+
+        assertThat(loans).extracting(Loan::getLoanType, Loan::getInterestRate, Loan::getInterestPaymentFrequency)
+                .containsExactlyInAnyOrder(
+                        tuple(PARENT_LOAN, null, null),
+                        tuple(CHILD_LOAN, "2.50000", getFrequencies(2)),
+                        tuple(CHILD_LOAN, "1.20000", getFrequencies(6))
+                );
+    }
+
 }

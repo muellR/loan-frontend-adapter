@@ -73,5 +73,20 @@
       400005
     ],
     "status":"inactive"
+  },
+  {
+    "id":100006,
+    "owners":[
+      {
+        "id":6,
+        "name":"Test 6"
+      }
+    ],
+    "limit":200006,
+    "products":[
+      300006,
+      400006
+    ],
+    "status":"inactive"
   }
 ]
