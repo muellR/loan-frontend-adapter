@@ -15,26 +15,23 @@ import java.util.List;
 import java.util.Map;
 import java.util.stream.Stream;
 
+import static com.appletree.lfa.model.Loan.LoanStatusEnum;
+import static com.appletree.lfa.model.Loan.LoanTypeEnum;
 import static com.appletree.lfa.model.Loan.LoanTypeEnum.CHILD_LOAN;
 import static com.appletree.lfa.model.Loan.LoanTypeEnum.PARENT_LOAN;
 import static com.appletree.lfa.model.LoanCollateralInner.TypeEnum;
 import static com.appletree.lfa.util.DateUtil.convert;
+import static com.appletree.lfa.util.DateUtil.getFrequencies;
 import static java.util.Comparator.naturalOrder;
 
 @Slf4j
 @Service
 public class LoanConverter {
 
-    private static final DecimalFormat ZERO_DECIMALS_FORMAT = new DecimalFormat("#");
-    private static final DecimalFormat TWO_DECIMALS_FORMAT = new DecimalFormat("#.00");
-    private static final DecimalFormat FIVE_DECIMALS_FORMAT = new DecimalFormat("#.00000");
-    private static final Map<Integer, String> FREQUENCIES = Map.of(
-            1, "Annually",
-            2, "Semiannual",
-            3, "Triannual",
-            4, "Quarterly",
-            6, "Bimonthly",
-            12, "Monthly");
+    private static final DecimalFormat ZERO_DECIMALS = new DecimalFormat("#");
+    private static final DecimalFormat TWO_DECIMALS = new DecimalFormat("#.00");
+    private static final DecimalFormat FIVE_DECIMALS = new DecimalFormat("#.00000");
+
 
     public List<Loan> convertLoans(List<FinancingObject> financingObjects, Map<Long, Limit> limits, Map<Long, Product> products) {
         log.info("converting loans");
@@ -57,10 +54,10 @@ public class LoanConverter {
                 PARENT_LOAN,
                 limit.getName(),
                 limit.getContractNumber(),
-                Loan.LoanStatusEnum.fromValue(financingObject.getStatus().toString().toLowerCase()),
+                LoanStatusEnum.fromValue(financingObject.getStatus().toString().toLowerCase()),
                 null,
-                TWO_DECIMALS_FORMAT.format(products.stream().mapToDouble(Product::getAmount).sum()),
-                ZERO_DECIMALS_FORMAT.format(limit.getLimitAmount()),
+                TWO_DECIMALS.format(products.stream().mapToDouble(Product::getAmount).sum()),
+                ZERO_DECIMALS.format(limit.getLimitAmount()),
                 null,
                 null,
                 products.stream().anyMatch(Product::getIsOverdue),
@@ -69,9 +66,9 @@ public class LoanConverter {
                 convert(products.stream().map(Product::getEndDate).max(naturalOrder()).orElse(null)),
                 financingObject.getOwners().stream().map(FinancingObjectOwner::getName).toList(),
                 null,
-                FREQUENCIES.get(limit.getAgreedAmortisationFrequency()),
+                getFrequencies(limit.getAgreedAmortisationFrequency()),
                 null,
-                convertCollaterals(limit)
+                convertCollaterals(limit, PARENT_LOAN)
         );
     }
 
@@ -87,38 +84,38 @@ public class LoanConverter {
                 CHILD_LOAN,
                 product.getName(),
                 limit.getContractNumber(),
-                Loan.LoanStatusEnum.fromValue(financingObject.getStatus().toString().toLowerCase()),
+                LoanStatusEnum.fromValue(financingObject.getStatus().toString().toLowerCase()),
                 product.getCurrencyCode().toString(),
-                TWO_DECIMALS_FORMAT.format(product.getAmount()),
-                ZERO_DECIMALS_FORMAT.format(limit.getLimitAmount()),
-                FIVE_DECIMALS_FORMAT.format(product.getInterestRate()),
-                FIVE_DECIMALS_FORMAT.format(product.getInterestDue()),
+                TWO_DECIMALS.format(product.getAmount()),
+                ZERO_DECIMALS.format(limit.getLimitAmount()),
+                FIVE_DECIMALS.format(product.getInterestRate()),
+                FIVE_DECIMALS.format(product.getInterestDue()),
                 product.getIsOverdue(),
                 financingObject.getId().toString(),
                 convert(product.getStartDate()),
                 convert(product.getEndDate()),
                 financingObject.getOwners().stream().map(FinancingObjectOwner::getName).toList(),
                 product.getDefaultSettlementAccountNumber(),
-                FREQUENCIES.get(limit.getAgreedAmortisationFrequency()),
-                FREQUENCIES.get(product.getInterestPaymentFrequency()),
-                convertCollaterals(limit)
+                null,
+                getFrequencies(product.getInterestPaymentFrequency()),
+                convertCollaterals(limit, CHILD_LOAN)
         );
     }
 
-    private List<LoanCollateralInner> convertCollaterals(Limit limit) {
+    private List<LoanCollateralInner> convertCollaterals(Limit limit, LoanTypeEnum loanType) {
         return limit.getRealSecurities().stream()
-                .map(rs -> convertCollateral(limit.getAmortisationAmountAnnual(), rs))
+                .map(rs -> convertCollateral(limit,loanType, rs))
                 .toList();
     }
 
-    private LoanCollateralInner convertCollateral(Double amortisationAmountAnnual, LimitRealSecurity realSecurity) {
+    private LoanCollateralInner convertCollateral(Limit limit, LoanTypeEnum loanType, LimitRealSecurity realSecurity) {
         return new LoanCollateralInner(
                 TypeEnum.fromValue(realSecurity.getType().toString()),
-                ZERO_DECIMALS_FORMAT.format(realSecurity.getCollateralValue()),
+                ZERO_DECIMALS.format(realSecurity.getCollateralValue()),
                 realSecurity.getCurrency().toString(),
                 realSecurity.getAddress(),
                 realSecurity.getNextRevaluationDate(),
-                TWO_DECIMALS_FORMAT.format(amortisationAmountAnnual)
+                PARENT_LOAN.equals(loanType) ? TWO_DECIMALS.format(limit.getAmortisationAmountAnnual() / limit.getAgreedAmortisationFrequency()) : null
         );
     }
 }

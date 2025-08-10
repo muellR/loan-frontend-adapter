@@ -8,6 +8,7 @@ import com.appletree.lfa.data.product.Product;
 import com.appletree.lfa.data.product.ProductRepository;
 import com.appletree.lfa.data.shared.ResourceDataLoader;
 import com.appletree.lfa.model.Loan;
+import com.appletree.lfa.model.LoanCollateralInner;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.TestInstance;
@@ -17,10 +18,13 @@ import org.springframework.test.context.bean.override.mockito.MockitoSpyBean;
 
 import java.time.LocalDate;
 import java.util.List;
+import java.util.Objects;
 
 import static com.appletree.lfa.model.Loan.LoanTypeEnum.CHILD_LOAN;
 import static com.appletree.lfa.model.Loan.LoanTypeEnum.PARENT_LOAN;
 import static com.appletree.lfa.util.DateUtil.convert;
+import static com.appletree.lfa.util.DateUtil.getFrequencies;
+import static java.lang.Double.parseDouble;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.tuple;
 import static org.mockito.Mockito.doReturn;
@@ -99,6 +103,18 @@ class LoanRestControllerTest {
                         tuple(PARENT_LOAN, false),
                         tuple(CHILD_LOAN, false),
                         tuple(CHILD_LOAN, false)
+                );
+    }
+
+    @Test
+    public void givenMultipleProducts_whenLoansReturned_thenOnlyParentHasAmortisationPaymentAmount() {
+        List<Loan> loans = loanRestController.serviceV1LoansByUserUserIdGet("5").getBody();
+
+        assertThat(loans).extracting(Loan::getLoanType, l -> l.getCollateral().getFirst().getAmortisationPaymentAmount(), Loan::getPaymentFrequency)
+                .containsExactlyInAnyOrder(
+                        tuple(PARENT_LOAN, "1250.00", getFrequencies(4)),
+                        tuple(CHILD_LOAN, null, null),
+                        tuple(CHILD_LOAN, null, null)
                 );
     }
 }
