@@ -15,9 +15,13 @@ public class ResourceDataLoader {
 
     private final ObjectMapper objectMapper;
 
-    public <T> List<T> readDataFromResources(String resourceFilePath, Class<T> clazz) throws IOException {
+    public <T> List<T> readDataFromResources(String resourceFilePath, Class<T> clazz) {
         InputStream inputStream = clazz.getResourceAsStream(resourceFilePath);
         CollectionType listType = objectMapper.getTypeFactory().constructCollectionType(List.class, clazz);
-        return objectMapper.readValue(inputStream, listType);
+        try {
+            return objectMapper.readValue(inputStream, listType);
+        } catch (IOException e) {
+            throw new RuntimeException(e);
+        }
     }
 }

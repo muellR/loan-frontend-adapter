@@ -14,7 +14,7 @@ public class FinancingObjectRepository {
     private final ResourceDataLoader resourceDataLoader;
     private List<FinancingObject> financingObjects;
 
-    public List<FinancingObject> findByUserId(final Long userId) throws IOException {
+    public List<FinancingObject> findByUserId(final Long userId) {
         if (userId == null) {
             throw new IllegalArgumentException("null userId received");
         }
