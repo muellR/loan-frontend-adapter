@@ -3,6 +3,7 @@ package com.appletree.lfa.data.shared;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.type.CollectionType;
 import lombok.RequiredArgsConstructor;
+import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.stereotype.Service;
 
 import java.io.IOException;
@@ -13,6 +14,7 @@ import java.util.List;
 @RequiredArgsConstructor
 public class ResourceDataLoader {
 
+    @Qualifier("swissDateFormatObjectMapper")
     private final ObjectMapper objectMapper;
 
     public <T> List<T> readDataFromResources(String resourceFilePath, Class<T> clazz) {

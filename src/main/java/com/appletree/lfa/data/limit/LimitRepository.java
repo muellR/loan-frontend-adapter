@@ -21,10 +21,14 @@ public class LimitRepository {
             throw new IllegalArgumentException("null ids received");
         }
         if (limits == null) {
-            limits = resourceDataLoader.readDataFromResources("/data/20231214_TestData_LIMITS.json", Limit.class);
+            limits = getLimits();
         }
         return limits.stream()
                 .filter(l -> ids.contains(l.getId()))
                 .collect(toMap(Limit::getId, l -> l));
+    }
+
+    public List<Limit> getLimits() {
+        return resourceDataLoader.readDataFromResources("/data/20231214_TestData_LIMITS.json", Limit.class);
     }
 }

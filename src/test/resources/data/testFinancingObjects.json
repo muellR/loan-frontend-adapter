@@ -1,0 +1,17 @@
+[
+  {
+    "id":100001,
+    "owners":[
+      {
+        "id":1,
+        "name":"Test 1"
+      }
+    ],
+    "limit":200001,
+    "products":[
+      300001,
+      400001
+    ],
+    "status":"inactive"
+  }
+]

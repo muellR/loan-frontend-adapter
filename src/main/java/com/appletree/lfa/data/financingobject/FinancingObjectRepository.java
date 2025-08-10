@@ -19,11 +19,15 @@ public class FinancingObjectRepository {
             throw new IllegalArgumentException("null userId received");
         }
         if (financingObjects == null) {
-            financingObjects = resourceDataLoader.readDataFromResources("/data/20231210_TestData_FINANCING_OBJECT.json", FinancingObject.class);
+            financingObjects = getFinancingObjects();
         }
         return financingObjects.stream()
                 .filter(fo -> fo.getOwners() != null)
                 .filter(fo -> fo.getOwners().stream().anyMatch(o -> o.getId().equals(userId)))
                 .toList();
+    }
+
+    public List<FinancingObject> getFinancingObjects() {
+        return resourceDataLoader.readDataFromResources("/data/20231210_TestData_FINANCING_OBJECT.json", FinancingObject.class);
     }
 }

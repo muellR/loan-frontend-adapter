@@ -1,0 +1,20 @@
+[
+  {
+    "id":200001,
+    "name":"Basiskredit Darlehen",
+    "type":"Darlehen",
+    "limitAmount":1000000,
+    "amortisationAmountAnnual":10000,
+    "agreedAmortisationFrequency":4,
+    "contractNumber":"2000-00001.11",
+    "realSecurities":[
+      {
+        "type":"Bauland",
+        "address":"Testweg 1, 0001 Testingen",
+        "collateralValue":1080000,
+        "currency":"CHF",
+        "nextRevaluationDate":"31.03.2026"
+      }
+    ]
+  }
+]

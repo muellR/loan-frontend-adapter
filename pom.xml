@@ -118,12 +118,6 @@
                             <generatorName>spring</generatorName>
                             <apiPackage>com.appletree.lfa.api</apiPackage>
                             <modelPackage>com.appletree.lfa.model</modelPackage>
-                            <typeMappings>
-                                <typeMapping>OffsetDateTime=LocalDate</typeMapping>
-                            </typeMappings>
-                            <importMappings>
-                                <importMapping>java.time.OffsetDateTime=java.time.LocalDate</importMapping>
-                            </importMappings>
                             <configOptions>
                                 <additionalModelTypeAnnotations>@lombok.Data @lombok.NoArgsConstructor @lombok.AllArgsConstructor</additionalModelTypeAnnotations>
                                 <delegatePattern>true</delegatePattern>

@@ -17,14 +17,14 @@ import java.util.Map;
 @Slf4j
 @Service
 @RequiredArgsConstructor
-public class UserLoanProvider {
+public class UserLoanService {
 
     private final FinancingObjectRepository financingObjectRepository;
     private final LimitRepository limitRepository;
     private final ProductRepository productRepository;
     private final LoanConverter loanConverter;
 
-    public List<Loan> provideLoans(Long userId) {
+    public List<Loan> getLoans(Long userId) {
         log.debug("getting financing objects of userId={}", userId);
         List<FinancingObject> userFinancingObjects = financingObjectRepository.findByUserId(userId);
 
