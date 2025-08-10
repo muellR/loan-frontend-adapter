@@ -1,6 +1,7 @@
-package com.appletree.lfa.data.product;
+package com.appletree.lfa.data.access.repo;
 
-import com.appletree.lfa.data.shared.ResourceDataLoader;
+import com.appletree.lfa.data.access.ResourceDataLoader;
+import com.appletree.lfa.data.model.product.Product;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Repository;
 

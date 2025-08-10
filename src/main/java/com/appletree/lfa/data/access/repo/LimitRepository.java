@@ -1,6 +1,7 @@
-package com.appletree.lfa.data.limit;
+package com.appletree.lfa.data.access.repo;
 
-import com.appletree.lfa.data.shared.ResourceDataLoader;
+import com.appletree.lfa.data.access.ResourceDataLoader;
+import com.appletree.lfa.data.model.limit.Limit;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Repository;
 

@@ -1,10 +1,10 @@
-package com.appletree.lfa.data.financingobject;
+package com.appletree.lfa.data.access.repo;
 
-import com.appletree.lfa.data.shared.ResourceDataLoader;
+import com.appletree.lfa.data.access.ResourceDataLoader;
+import com.appletree.lfa.data.model.financingobject.FinancingObject;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Repository;
 
-import java.io.IOException;
 import java.util.List;
 
 @Repository

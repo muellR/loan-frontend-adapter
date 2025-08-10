@@ -1,8 +1,6 @@
-package com.appletree.lfa.data.limit;
+package com.appletree.lfa.data.model.limit;
 
 
-import com.appletree.lfa.model.LoanCollateralInner;
-import com.fasterxml.jackson.annotation.JsonCreator;
 import com.fasterxml.jackson.annotation.JsonValue;
 
 public enum LimitRealSecurityType {

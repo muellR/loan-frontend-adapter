@@ -1,4 +1,4 @@
-package com.appletree.lfa.data.shared;
+package com.appletree.lfa.data.access;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.type.CollectionType;

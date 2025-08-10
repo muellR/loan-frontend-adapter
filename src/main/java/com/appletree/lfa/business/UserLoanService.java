@@ -1,11 +1,12 @@
 package com.appletree.lfa.business;
 
-import com.appletree.lfa.data.financingobject.FinancingObject;
-import com.appletree.lfa.data.financingobject.FinancingObjectRepository;
-import com.appletree.lfa.data.limit.Limit;
-import com.appletree.lfa.data.limit.LimitRepository;
-import com.appletree.lfa.data.product.Product;
-import com.appletree.lfa.data.product.ProductRepository;
+import com.appletree.lfa.business.convert.LoanConverter;
+import com.appletree.lfa.data.access.repo.FinancingObjectRepository;
+import com.appletree.lfa.data.access.repo.LimitRepository;
+import com.appletree.lfa.data.access.repo.ProductRepository;
+import com.appletree.lfa.data.model.financingobject.FinancingObject;
+import com.appletree.lfa.data.model.limit.Limit;
+import com.appletree.lfa.data.model.product.Product;
 import com.appletree.lfa.model.Loan;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;

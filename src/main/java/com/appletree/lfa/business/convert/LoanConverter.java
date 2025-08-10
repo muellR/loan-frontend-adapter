@@ -1,10 +1,10 @@
-package com.appletree.lfa.business;
+package com.appletree.lfa.business.convert;
 
-import com.appletree.lfa.data.financingobject.FinancingObject;
-import com.appletree.lfa.data.financingobject.FinancingObjectOwner;
-import com.appletree.lfa.data.limit.Limit;
-import com.appletree.lfa.data.limit.LimitRealSecurity;
-import com.appletree.lfa.data.product.Product;
+import com.appletree.lfa.data.model.financingobject.FinancingObject;
+import com.appletree.lfa.data.model.financingobject.FinancingObjectOwner;
+import com.appletree.lfa.data.model.limit.Limit;
+import com.appletree.lfa.data.model.limit.LimitRealSecurity;
+import com.appletree.lfa.data.model.product.Product;
 import com.appletree.lfa.model.Loan;
 import com.appletree.lfa.model.LoanCollateralInner;
 import lombok.extern.slf4j.Slf4j;
@@ -13,6 +13,7 @@ import org.springframework.stereotype.Service;
 import java.text.DecimalFormat;
 import java.util.List;
 import java.util.Map;
+import java.util.Objects;
 import java.util.stream.Stream;
 
 import static com.appletree.lfa.model.Loan.LoanStatusEnum;
@@ -20,7 +21,7 @@ import static com.appletree.lfa.model.Loan.LoanTypeEnum;
 import static com.appletree.lfa.model.Loan.LoanTypeEnum.CHILD_LOAN;
 import static com.appletree.lfa.model.Loan.LoanTypeEnum.PARENT_LOAN;
 import static com.appletree.lfa.model.LoanCollateralInner.TypeEnum;
-import static com.appletree.lfa.util.DateUtil.convert;
+import static com.appletree.lfa.util.DateUtil.convertOffsetDateTime;
 import static com.appletree.lfa.util.DateUtil.getFrequencies;
 import static java.util.Comparator.naturalOrder;
 
@@ -62,8 +63,8 @@ public class LoanConverter {
                 null,
                 products.stream().anyMatch(Product::getIsOverdue),
                 null,
-                convert(products.stream().map(Product::getStartDate).min(naturalOrder()).orElse(null)),
-                convert(products.stream().map(Product::getEndDate).max(naturalOrder()).orElse(null)),
+                convertOffsetDateTime(products.stream().map(Product::getStartDate).filter(Objects::nonNull).min(naturalOrder()).orElse(null)),
+                convertOffsetDateTime(products.stream().map(Product::getEndDate).filter(Objects::nonNull).max(naturalOrder()).orElse(null)),
                 financingObject.getOwners().stream().map(FinancingObjectOwner::getName).toList(),
                 null,
                 getFrequencies(limit.getAgreedAmortisationFrequency()),
@@ -92,8 +93,8 @@ public class LoanConverter {
                 FIVE_DECIMALS.format(product.getInterestDue()),
                 product.getIsOverdue(),
                 financingObject.getId().toString(),
-                convert(product.getStartDate()),
-                convert(product.getEndDate()),
+                convertOffsetDateTime(product.getStartDate()),
+                convertOffsetDateTime(product.getEndDate()),
                 financingObject.getOwners().stream().map(FinancingObjectOwner::getName).toList(),
                 product.getDefaultSettlementAccountNumber(),
                 null,
@@ -104,7 +105,7 @@ public class LoanConverter {
 
     private List<LoanCollateralInner> convertCollaterals(Limit limit, LoanTypeEnum loanType) {
         return limit.getRealSecurities().stream()
-                .map(rs -> convertCollateral(limit,loanType, rs))
+                .map(rs -> convertCollateral(limit, loanType, rs))
                 .toList();
     }
 

@@ -18,7 +18,7 @@ public final class DateUtil {
             6, "Bimonthly",
             12, "Monthly");
 
-    public static OffsetDateTime convert(LocalDate localDate) {
+    public static OffsetDateTime convertOffsetDateTime(LocalDate localDate) {
         if (localDate == null) {
             return null;
         }

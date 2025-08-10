@@ -1,4 +1,4 @@
-package com.appletree.lfa.data.limit;
+package com.appletree.lfa.data.model.limit;
 
 import lombok.AllArgsConstructor;
 import lombok.Data;

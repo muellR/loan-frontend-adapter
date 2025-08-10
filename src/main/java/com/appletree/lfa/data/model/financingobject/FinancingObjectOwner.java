@@ -1,4 +1,4 @@
-package com.appletree.lfa.data.financingobject;
+package com.appletree.lfa.data.model.financingobject;
 
 import lombok.AllArgsConstructor;
 import lombok.Data;

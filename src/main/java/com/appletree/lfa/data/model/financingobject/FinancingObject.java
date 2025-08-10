@@ -1,4 +1,4 @@
-package com.appletree.lfa.data.financingobject;
+package com.appletree.lfa.data.model.financingobject;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
 import lombok.AllArgsConstructor;

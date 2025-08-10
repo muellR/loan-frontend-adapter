@@ -1,4 +1,4 @@
-package com.appletree.lfa.data.product;
+package com.appletree.lfa.data.model.product;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
 

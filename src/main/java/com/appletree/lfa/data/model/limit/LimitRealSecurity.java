@@ -1,6 +1,6 @@
-package com.appletree.lfa.data.limit;
+package com.appletree.lfa.data.model.limit;
 
-import com.appletree.lfa.data.shared.CurrencyCode;
+import com.appletree.lfa.data.model.shared.CurrencyCode;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;

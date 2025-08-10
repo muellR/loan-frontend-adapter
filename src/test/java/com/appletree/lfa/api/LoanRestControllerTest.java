@@ -1,12 +1,12 @@
-package com.appletree.lfa.service;
+package com.appletree.lfa.api;
 
-import com.appletree.lfa.data.financingobject.FinancingObject;
-import com.appletree.lfa.data.financingobject.FinancingObjectRepository;
-import com.appletree.lfa.data.limit.Limit;
-import com.appletree.lfa.data.limit.LimitRepository;
-import com.appletree.lfa.data.product.Product;
-import com.appletree.lfa.data.product.ProductRepository;
-import com.appletree.lfa.data.shared.ResourceDataLoader;
+import com.appletree.lfa.data.access.ResourceDataLoader;
+import com.appletree.lfa.data.access.repo.FinancingObjectRepository;
+import com.appletree.lfa.data.access.repo.LimitRepository;
+import com.appletree.lfa.data.access.repo.ProductRepository;
+import com.appletree.lfa.data.model.financingobject.FinancingObject;
+import com.appletree.lfa.data.model.limit.Limit;
+import com.appletree.lfa.data.model.product.Product;
 import com.appletree.lfa.model.Loan;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Test;
@@ -20,7 +20,7 @@ import java.util.List;
 
 import static com.appletree.lfa.model.Loan.LoanTypeEnum.CHILD_LOAN;
 import static com.appletree.lfa.model.Loan.LoanTypeEnum.PARENT_LOAN;
-import static com.appletree.lfa.util.DateUtil.convert;
+import static com.appletree.lfa.util.DateUtil.convertOffsetDateTime;
 import static com.appletree.lfa.util.DateUtil.getFrequencies;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.tuple;
@@ -73,9 +73,9 @@ class LoanRestControllerTest {
 
         assertThat(loans).extracting(Loan::getLoanType, Loan::getStartDate, Loan::getEndDate)
                 .containsExactlyInAnyOrder(
-                        tuple(PARENT_LOAN, convert(LocalDate.of(2020, 11, 1)), convert(LocalDate.of(2030, 12, 15))),
-                        tuple(CHILD_LOAN, convert(LocalDate.of(2020, 12, 15)), convert(LocalDate.of(2030, 12, 15))),
-                        tuple(CHILD_LOAN, convert(LocalDate.of(2020, 11, 1)), convert(LocalDate.of(2025, 11, 1)))
+                        tuple(PARENT_LOAN, convertOffsetDateTime(LocalDate.of(2020, 11, 1)), convertOffsetDateTime(LocalDate.of(2030, 12, 15))),
+                        tuple(CHILD_LOAN, convertOffsetDateTime(LocalDate.of(2020, 12, 15)), convertOffsetDateTime(LocalDate.of(2030, 12, 15))),
+                        tuple(CHILD_LOAN, convertOffsetDateTime(LocalDate.of(2020, 11, 1)), convertOffsetDateTime(LocalDate.of(2025, 11, 1)))
                 );
     }
 
@@ -113,11 +113,6 @@ class LoanRestControllerTest {
                         tuple(CHILD_LOAN, null, null),
                         tuple(CHILD_LOAN, null, null)
                 );
-    }
-
-    @Test
-    public void givenMultipleProducts_whenLoansReturned_thenParentHasEarliestInterest() {
-        // TODO muellR: use case violates specification, will not be implemented until clarified
     }
 
     @Test

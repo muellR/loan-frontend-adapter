@@ -114,7 +114,9 @@
                             <goal>generate</goal>
                         </goals>
                         <configuration>
-                            <inputSpec>${project.basedir}/src/main/resources/openapi/20231210_OutboundIntegrationAPI_LoansService.yaml</inputSpec>
+                            <inputSpec>
+                                ${project.basedir}/src/main/resources/spec/20231210_OutboundIntegrationAPI_LoansService.yaml
+                            </inputSpec>
                             <generatorName>spring</generatorName>
                             <apiPackage>com.appletree.lfa.api</apiPackage>
                             <modelPackage>com.appletree.lfa.model</modelPackage>

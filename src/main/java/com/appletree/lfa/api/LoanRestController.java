@@ -1,4 +1,4 @@
-package com.appletree.lfa.service;
+package com.appletree.lfa.api;
 
 import com.appletree.lfa.business.UserLoanService;
 import com.appletree.lfa.model.Loan;
