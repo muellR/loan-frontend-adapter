@@ -11,11 +11,6 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 
 import java.text.DecimalFormat;
-import java.time.LocalDate;
-import java.time.OffsetDateTime;
-import java.time.ZoneId;
-import java.time.ZonedDateTime;
-import java.time.format.DateTimeFormatter;
 import java.util.List;
 import java.util.Map;
 import java.util.stream.Stream;
@@ -23,7 +18,7 @@ import java.util.stream.Stream;
 import static com.appletree.lfa.model.Loan.LoanTypeEnum.CHILD_LOAN;
 import static com.appletree.lfa.model.Loan.LoanTypeEnum.PARENT_LOAN;
 import static com.appletree.lfa.model.LoanCollateralInner.TypeEnum;
-import static java.time.ZoneOffset.UTC;
+import static com.appletree.lfa.util.DateUtil.convert;
 import static java.util.Comparator.naturalOrder;
 
 @Slf4j
@@ -70,8 +65,8 @@ public class LoanConverter {
                 null,
                 products.stream().anyMatch(Product::getIsOverdue),
                 null,
-                convertLocalDate(products.stream().map(Product::getStartDate).min(naturalOrder()).orElse(null)),
-                convertLocalDate(products.stream().map(Product::getEndDate).max(naturalOrder()).orElse(null)),
+                convert(products.stream().map(Product::getStartDate).min(naturalOrder()).orElse(null)),
+                convert(products.stream().map(Product::getEndDate).max(naturalOrder()).orElse(null)),
                 financingObject.getOwners().stream().map(FinancingObjectOwner::getName).toList(),
                 null,
                 FREQUENCIES.get(limit.getAgreedAmortisationFrequency()),
@@ -100,8 +95,8 @@ public class LoanConverter {
                 FIVE_DECIMALS_FORMAT.format(product.getInterestDue()),
                 product.getIsOverdue(),
                 financingObject.getId().toString(),
-                convertLocalDate(product.getStartDate()),
-                convertLocalDate(product.getEndDate()),
+                convert(product.getStartDate()),
+                convert(product.getEndDate()),
                 financingObject.getOwners().stream().map(FinancingObjectOwner::getName).toList(),
                 product.getDefaultSettlementAccountNumber(),
                 FREQUENCIES.get(limit.getAgreedAmortisationFrequency()),
@@ -125,14 +120,5 @@ public class LoanConverter {
                 realSecurity.getNextRevaluationDate(),
                 TWO_DECIMALS_FORMAT.format(amortisationAmountAnnual)
         );
-    }
-
-    private OffsetDateTime convertLocalDate(LocalDate localDate) {
-        if (localDate == null) {
-            return null;
-        }
-        ZoneId zoneId = ZoneId.of("Europe/Zurich");
-        ZonedDateTime zonedDateTime = localDate.atStartOfDay(zoneId);
-        return zonedDateTime.withZoneSameInstant(UTC).toOffsetDateTime();
     }
 }

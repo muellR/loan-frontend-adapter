@@ -15,10 +15,12 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.test.context.bean.override.mockito.MockitoSpyBean;
 
+import java.time.LocalDate;
 import java.util.List;
 
 import static com.appletree.lfa.model.Loan.LoanTypeEnum.CHILD_LOAN;
 import static com.appletree.lfa.model.Loan.LoanTypeEnum.PARENT_LOAN;
+import static com.appletree.lfa.util.DateUtil.convert;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.tuple;
 import static org.mockito.Mockito.doReturn;
@@ -61,6 +63,42 @@ class LoanRestControllerTest {
                         tuple(PARENT_LOAN, "205000.00"),
                         tuple(CHILD_LOAN, "120000.00"),
                         tuple(CHILD_LOAN, "85000.00")
+                );
+    }
+
+    @Test
+    public void givenMultipleProducts_whenLoansReturned_thenParentShowsFullDateRangeOfChildren() {
+        List<Loan> loans = loanRestController.serviceV1LoansByUserUserIdGet("2").getBody();
+
+        assertThat(loans).extracting(Loan::getLoanType, Loan::getStartDate, Loan::getEndDate)
+                .containsExactlyInAnyOrder(
+                        tuple(PARENT_LOAN, convert(LocalDate.of(2020, 11, 1)), convert(LocalDate.of(2030, 12, 15))),
+                        tuple(CHILD_LOAN, convert(LocalDate.of(2020, 12, 15)), convert(LocalDate.of(2030, 12, 15))),
+                        tuple(CHILD_LOAN, convert(LocalDate.of(2020, 11, 1)), convert(LocalDate.of(2025, 11, 1)))
+                );
+    }
+
+    @Test
+    public void givenMultipleProducts_whenLoansReturned_thenParentIsOverdueIfAnyOfChildren() {
+        List<Loan> loans = loanRestController.serviceV1LoansByUserUserIdGet("3").getBody();
+
+        assertThat(loans).extracting(Loan::getLoanType, Loan::getIsOverdue)
+                .containsExactlyInAnyOrder(
+                        tuple(PARENT_LOAN, true),
+                        tuple(CHILD_LOAN, true),
+                        tuple(CHILD_LOAN, false)
+                );
+    }
+
+    @Test
+    public void givenMultipleProducts_whenLoansReturned_thenParentIsNotOverdueIfNoneOfChildren() {
+        List<Loan> loans = loanRestController.serviceV1LoansByUserUserIdGet("4").getBody();
+
+        assertThat(loans).extracting(Loan::getLoanType, Loan::getIsOverdue)
+                .containsExactlyInAnyOrder(
+                        tuple(PARENT_LOAN, false),
+                        tuple(CHILD_LOAN, false),
+                        tuple(CHILD_LOAN, false)
                 );
     }
 }
