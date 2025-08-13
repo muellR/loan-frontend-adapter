@@ -28,6 +28,7 @@
     - `paymentFrequency` und `interestPaymentFrequency` werden gemäss dem [openapi-spec](src/main/resources/spec/20231210_OutboundIntegrationAPI_LoansService.yaml)-Beispiel als `"Monthly"` oder `"Quarterly"` ans Frontend übermittelt. Es müssen aber noch andere `Frequency`s gemappt werden (siehe [FrequencyUtil](src/main/java/com/appletree/lfa/util/FrequencyUtil.java)). Sollte jetzt zum Beispiel die Ausprägung `1` als `"Annually"` oder als `"Yearly"` gemapped werden?
     - Gehört die `contractNumber` nur auf den Parent-`Loan` oder genauso auf die Child-`Loan`s?
     - Wie wird der `currencyCode` in einem Parent-`Loan` abgebildet, wenn in den zugehörigen Child-`Loan`s verschiedene Währungen vorkommen? Und wie werden dann die Beträge im Parent-`Loan` aufsummiert?
+    - Im [openapi-spec](src/main/resources/spec/20231210_OutboundIntegrationAPI_LoansService.yaml)-Beispiel wird der IBAN als `String` im Format `"CH12 1234 45678 1230"` dargestellt. Das scheint ein Spezifikations-Fehler zu sein und daher wird der IBAN im üblichen Format beibehalten (`"CH12 1234 4567 8123 0"`). Muss das geändert werden?
     - ...
 
 ### User Stories
