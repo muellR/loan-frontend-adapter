@@ -22,7 +22,7 @@ import static com.appletree.lfa.model.Loan.LoanTypeEnum.CHILD_LOAN;
 import static com.appletree.lfa.model.Loan.LoanTypeEnum.PARENT_LOAN;
 import static com.appletree.lfa.model.LoanCollateralInner.TypeEnum;
 import static com.appletree.lfa.util.DateUtil.convertOffsetDateTime;
-import static com.appletree.lfa.util.DateUtil.getFrequencies;
+import static com.appletree.lfa.util.FrequencyUtil.FREQUENCIES;
 import static java.util.Comparator.naturalOrder;
 
 @Slf4j
@@ -67,7 +67,7 @@ public class LoanConverter {
                 convertOffsetDateTime(products.stream().map(Product::getEndDate).filter(Objects::nonNull).max(naturalOrder()).orElse(null)),
                 financingObject.getOwners().stream().map(FinancingObjectOwner::getName).toList(),
                 null,
-                getFrequencies(limit.getAgreedAmortisationFrequency()),
+                FREQUENCIES.get(limit.getAgreedAmortisationFrequency()),
                 null,
                 convertCollaterals(limit, PARENT_LOAN)
         );
@@ -98,7 +98,7 @@ public class LoanConverter {
                 financingObject.getOwners().stream().map(FinancingObjectOwner::getName).toList(),
                 product.getDefaultSettlementAccountNumber(),
                 null,
-                getFrequencies(product.getInterestPaymentFrequency()),
+                FREQUENCIES.get(product.getInterestPaymentFrequency()),
                 convertCollaterals(limit, CHILD_LOAN)
         );
     }

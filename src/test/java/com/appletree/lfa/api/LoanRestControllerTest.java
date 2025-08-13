@@ -21,7 +21,7 @@ import java.util.List;
 import static com.appletree.lfa.model.Loan.LoanTypeEnum.CHILD_LOAN;
 import static com.appletree.lfa.model.Loan.LoanTypeEnum.PARENT_LOAN;
 import static com.appletree.lfa.util.DateUtil.convertOffsetDateTime;
-import static com.appletree.lfa.util.DateUtil.getFrequencies;
+import static com.appletree.lfa.util.FrequencyUtil.FREQUENCIES;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.tuple;
 import static org.mockito.Mockito.doReturn;
@@ -109,7 +109,7 @@ class LoanRestControllerTest {
 
         assertThat(loans).extracting(Loan::getLoanType, l -> l.getCollateral().getFirst().getAmortisationPaymentAmount(), Loan::getPaymentFrequency)
                 .containsExactlyInAnyOrder(
-                        tuple(PARENT_LOAN, "1250.00", getFrequencies(4)),
+                        tuple(PARENT_LOAN, "1250.00", FREQUENCIES.get(4)),
                         tuple(CHILD_LOAN, null, null),
                         tuple(CHILD_LOAN, null, null)
                 );
@@ -122,8 +122,8 @@ class LoanRestControllerTest {
         assertThat(loans).extracting(Loan::getLoanType, Loan::getInterestRate, Loan::getInterestPaymentFrequency)
                 .containsExactlyInAnyOrder(
                         tuple(PARENT_LOAN, null, null),
-                        tuple(CHILD_LOAN, "2.50000", getFrequencies(2)),
-                        tuple(CHILD_LOAN, "1.20000", getFrequencies(6))
+                        tuple(CHILD_LOAN, "2.50000", FREQUENCIES.get(2)),
+                        tuple(CHILD_LOAN, "1.20000", FREQUENCIES.get(6))
                 );
     }
 
