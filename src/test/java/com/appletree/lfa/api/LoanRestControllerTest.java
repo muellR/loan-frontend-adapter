@@ -1,12 +1,12 @@
 package com.appletree.lfa.api;
 
-import com.appletree.lfa.data.model.financingobject.FinancingObject;
-import com.appletree.lfa.data.access.repo.FinancingObjectRepository;
-import com.appletree.lfa.data.model.limit.Limit;
-import com.appletree.lfa.data.access.repo.LimitRepository;
-import com.appletree.lfa.data.model.product.Product;
-import com.appletree.lfa.data.access.repo.ProductRepository;
 import com.appletree.lfa.data.access.ResourceDataLoader;
+import com.appletree.lfa.data.access.repo.FinancingObjectRepository;
+import com.appletree.lfa.data.access.repo.LimitRepository;
+import com.appletree.lfa.data.access.repo.ProductRepository;
+import com.appletree.lfa.data.model.financingobject.FinancingObject;
+import com.appletree.lfa.data.model.limit.Limit;
+import com.appletree.lfa.data.model.product.Product;
 import com.appletree.lfa.model.Loan;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Test;
@@ -15,13 +15,12 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.test.context.bean.override.mockito.MockitoSpyBean;
 
-import java.time.LocalDate;
+import java.time.OffsetDateTime;
 import java.util.List;
 
 import static com.appletree.lfa.model.Loan.LoanTypeEnum.CHILD_LOAN;
 import static com.appletree.lfa.model.Loan.LoanTypeEnum.PARENT_LOAN;
-import static com.appletree.lfa.util.DateUtil.convertOffsetDateTime;
-import static com.appletree.lfa.util.FrequencyUtil.FREQUENCIES;
+import static java.time.ZoneOffset.UTC;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.tuple;
 import static org.mockito.Mockito.doReturn;
@@ -56,7 +55,7 @@ class LoanRestControllerTest {
     }
 
     @Test
-    public void givenMultipleProducts_whenLoansReturned_thenParentOutstandingAmountIsSumOfChildren() {
+    void givenMultipleProducts_whenLoansReturned_thenParentOutstandingAmountIsSumOfChildren() {
         List<Loan> loans = loanRestController.serviceV1LoansByUserUserIdGet("1").getBody();
 
         assertThat(loans).extracting(Loan::getLoanType, Loan::getOutstandingAmount)
@@ -68,19 +67,24 @@ class LoanRestControllerTest {
     }
 
     @Test
-    public void givenMultipleProducts_whenLoansReturned_thenParentShowsFullDateRangeOfChildren() {
+    void givenMultipleProducts_whenLoansReturned_thenParentShowsFullDateRangeOfChildren() {
+        OffsetDateTime expectedDate20201101 = OffsetDateTime.of(2020, 10, 31, 23, 0, 0, 0, UTC);
+        OffsetDateTime expectedDate20201215 = OffsetDateTime.of(2020, 12, 14, 23, 0, 0, 0, UTC);
+        OffsetDateTime expectedDate20251101 = OffsetDateTime.of(2025, 10, 31, 23, 0, 0, 0, UTC);
+        OffsetDateTime expectedDate20301215 = OffsetDateTime.of(2030, 12, 14, 23, 0, 0, 0, UTC);
+
         List<Loan> loans = loanRestController.serviceV1LoansByUserUserIdGet("2").getBody();
 
         assertThat(loans).extracting(Loan::getLoanType, Loan::getStartDate, Loan::getEndDate)
                 .containsExactlyInAnyOrder(
-                        tuple(PARENT_LOAN, convertOffsetDateTime(LocalDate.of(2020, 11, 1)), convertOffsetDateTime(LocalDate.of(2030, 12, 15))),
-                        tuple(CHILD_LOAN, convertOffsetDateTime(LocalDate.of(2020, 12, 15)), convertOffsetDateTime(LocalDate.of(2030, 12, 15))),
-                        tuple(CHILD_LOAN, convertOffsetDateTime(LocalDate.of(2020, 11, 1)), convertOffsetDateTime(LocalDate.of(2025, 11, 1)))
+                        tuple(PARENT_LOAN, expectedDate20201101, expectedDate20301215),
+                        tuple(CHILD_LOAN, expectedDate20201215, expectedDate20301215),
+                        tuple(CHILD_LOAN, expectedDate20201101, expectedDate20251101)
                 );
     }
 
     @Test
-    public void givenMultipleProducts_whenLoansReturned_thenParentIsOverdueIfAnyOfChildren() {
+    void givenMultipleProducts_whenLoansReturned_thenParentIsOverdueIfAnyOfChildren() {
         List<Loan> loans = loanRestController.serviceV1LoansByUserUserIdGet("3").getBody();
 
         assertThat(loans).extracting(Loan::getLoanType, Loan::getIsOverdue)
@@ -92,7 +96,7 @@ class LoanRestControllerTest {
     }
 
     @Test
-    public void givenMultipleProducts_whenLoansReturned_thenParentIsNotOverdueIfNoneOfChildren() {
+    void givenMultipleProducts_whenLoansReturned_thenParentIsNotOverdueIfNoneOfChildren() {
         List<Loan> loans = loanRestController.serviceV1LoansByUserUserIdGet("4").getBody();
 
         assertThat(loans).extracting(Loan::getLoanType, Loan::getIsOverdue)
@@ -104,26 +108,26 @@ class LoanRestControllerTest {
     }
 
     @Test
-    public void givenMultipleProducts_whenLoansReturned_thenOnlyParentHasAmortisationPaymentAmountAndPaymentFrequency() {
+    void givenMultipleProducts_whenLoansReturned_thenOnlyParentHasAmortisationPaymentAmountAndPaymentFrequency() {
         List<Loan> loans = loanRestController.serviceV1LoansByUserUserIdGet("5").getBody();
 
         assertThat(loans).extracting(Loan::getLoanType, l -> l.getCollateral().getFirst().getAmortisationPaymentAmount(), Loan::getPaymentFrequency)
                 .containsExactlyInAnyOrder(
-                        tuple(PARENT_LOAN, "1250.00", FREQUENCIES.get(4)),
+                        tuple(PARENT_LOAN, "1250.00", "Quarterly"),
                         tuple(CHILD_LOAN, null, null),
                         tuple(CHILD_LOAN, null, null)
                 );
     }
 
     @Test
-    public void givenMultipleProducts_whenLoansReturned_thenOnlyChildrenHaveInterestRateAndInterestPaymentFrequency() {
+    void givenMultipleProducts_whenLoansReturned_thenOnlyChildrenHaveInterestRateAndInterestPaymentFrequency() {
         List<Loan> loans = loanRestController.serviceV1LoansByUserUserIdGet("6").getBody();
 
         assertThat(loans).extracting(Loan::getLoanType, Loan::getInterestRate, Loan::getInterestPaymentFrequency)
                 .containsExactlyInAnyOrder(
                         tuple(PARENT_LOAN, null, null),
-                        tuple(CHILD_LOAN, "2.50000", FREQUENCIES.get(2)),
-                        tuple(CHILD_LOAN, "1.20000", FREQUENCIES.get(6))
+                        tuple(CHILD_LOAN, "2.50000", "Semiannual"),
+                        tuple(CHILD_LOAN, "1.20000", "Bimonthly")
                 );
     }
 
