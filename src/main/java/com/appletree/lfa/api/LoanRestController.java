@@ -35,6 +35,7 @@ public class LoanRestController implements com.appletree.lfa.api.ServiceApiDeleg
 
     @GetMapping("/service/v1/userIds")
     public ResponseEntity<List<String>> serviceV1UserIdsGet() {
-        return ResponseEntity.ok(userService.getUserIds());
+        log.info("getting all available userIds");
+        return ResponseEntity.ok(userService.getUserIds().stream().map(String::valueOf).toList());
     }
 }

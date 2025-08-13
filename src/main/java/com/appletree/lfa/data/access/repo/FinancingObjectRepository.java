@@ -28,14 +28,13 @@ public class FinancingObjectRepository {
                 .toList();
     }
 
-    public List<String> findUserIds() {
+    public List<Long> findUserIds() {
         if (financingObjects == null) {
             financingObjects = getFinancingObjects();
         }
         return financingObjects.stream()
                 .flatMap(fo -> fo.getOwners().stream())
                 .map(FinancingObjectOwner::getId)
-                .map(String::valueOf)
                 .toList();
     }
 
